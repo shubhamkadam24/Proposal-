@@ -56,6 +56,8 @@
       box-shadow: var(--shadow);
       backdrop-filter: blur(8px);
       border: 1px solid rgba(255,255,255,.14);
+      position: relative;
+      overflow:hidden;
     }
     .screen.active{ display:block; }
 
@@ -123,23 +125,6 @@
       font-size: clamp(18px, 4vw, 22px);
       margin: 6px 0 0;
     }
-
-    .list{
-      list-style:none;
-      padding:0;
-      margin: 14px auto 6px;
-      text-align:left;
-      width: min(520px, 100%);
-      background: rgba(255,255,255,.12);
-      border: 1px solid rgba(255,255,255,.16);
-      border-radius: 18px;
-      padding: 12px 14px;
-    }
-    .list li{
-      padding: 8px 6px;
-      border-bottom: 1px dashed rgba(255,255,255,.22);
-    }
-    .list li:last-child{ border-bottom:none; }
 
     .pill-row{
       display:flex;
@@ -236,7 +221,6 @@
       border: 1px solid rgba(255,255,255,.14);
       overflow: hidden;
     }
-
     .wedding-grid{
       display:grid;
       grid-template-columns: 1fr;
@@ -244,7 +228,6 @@
       align-items:center;
       justify-items:center;
     }
-
     .bells{
       display:flex;
       gap: clamp(18px, 4vw, 28px);
@@ -252,7 +235,6 @@
       justify-content:center;
       margin-top: 2px;
     }
-
     .bell{
       width: clamp(44px, 10vw, 70px);
       height: clamp(44px, 10vw, 70px);
@@ -285,7 +267,6 @@
       background: rgba(0,0,0,.28);
     }
     .bell.right{ animation-delay: .18s; }
-
     @keyframes bellSwing{
       from{ transform: rotate(-10deg); }
       to  { transform: rotate(10deg); }
@@ -300,7 +281,6 @@
       justify-content:center;
       margin: 2px 0 2px;
     }
-
     .ring{
       position:absolute;
       width: clamp(74px, 16vw, 110px);
@@ -320,7 +300,6 @@
       border-color: rgba(255,255,255,.92);
       animation: ringB 1.8s ease-in-out infinite;
     }
-
     @keyframes ringA{
       0%  { transform: translateX(-36%) translateY(8%) scale(.86); }
       55% { transform: translateX(-10%) translateY(0%) scale(.98); }
@@ -352,11 +331,7 @@
       0%,100%{ transform: scale(.6) rotate(45deg); opacity:.35; }
       50%    { transform: scale(1.15) rotate(45deg); opacity:1; }
     }
-
-    .wedding-text{
-      font-weight: 900;
-      line-height: 1.25;
-    }
+    .wedding-text{ font-weight: 900; line-height: 1.25; }
     .wedding-text .big{
       font-size: clamp(18px, 4.2vw, 26px);
       margin: 0;
@@ -364,6 +339,194 @@
     .wedding-text .sub{
       margin: 6px 0 0;
       opacity:.92;
+      font-weight: 900;
+    }
+
+    /* Celebration effects + "God's Plan" background */
+    #celebrationScreen{
+      position: relative;
+      isolation: isolate;
+    }
+    #celebrationScreen::before{
+      content:"GOD'S PLAN • GOD'S PLAN • GOD'S PLAN • GOD'S PLAN • GOD'S PLAN •";
+      position:absolute;
+      inset:-30%;
+      z-index:0;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-weight: 900;
+      letter-spacing: 10px;
+      font-size: clamp(28px, 6vw, 64px);
+      opacity: .10;
+      transform: rotate(-18deg);
+      white-space: nowrap;
+      pointer-events:none;
+      text-shadow: 0 18px 60px rgba(0,0,0,.25);
+    }
+    #celebrationScreen::after{
+      content:"";
+      position:absolute;
+      inset:0;
+      z-index:1;
+      background:
+        radial-gradient(closest-side at 20% 25%, rgba(255,255,255,.18), transparent 55%),
+        radial-gradient(closest-side at 80% 30%, rgba(0,255,204,.14), transparent 60%),
+        radial-gradient(closest-side at 50% 85%, rgba(255,255,255,.12), transparent 60%);
+      pointer-events:none;
+    }
+    .celebrate-title, .celebrate-sub, .celebrate-lead, .celebrate-actions,
+    .benefits-top, .list { position: relative; z-index: 2; }
+
+    .celebrate-title{
+      display:inline-block;
+      animation: popGlow 1.25s ease-in-out infinite;
+      text-shadow:
+        0 14px 34px rgba(0,0,0,.22),
+        0 0 18px rgba(255,255,255,.22);
+    }
+    @keyframes popGlow{
+      0%,100%{ transform: translateY(0) scale(1); filter: brightness(1); }
+      50%    { transform: translateY(-4px) scale(1.02); filter: brightness(1.08); }
+    }
+    .celebrate-sub{
+      display:inline-block;
+      animation: floaty 2.2s ease-in-out infinite;
+      text-shadow: 0 12px 28px rgba(0,0,0,.18);
+    }
+    @keyframes floaty{
+      0%,100%{ transform: translateY(0); }
+      50%    { transform: translateY(3px); }
+    }
+
+    .shine-line{
+      width: min(520px, 100%);
+      height: 10px;
+      border-radius: 999px;
+      margin: 10px auto 0;
+      background: rgba(255,255,255,.16);
+      border: 1px solid rgba(255,255,255,.14);
+      overflow:hidden;
+      position: relative;
+      z-index: 2;
+    }
+    .shine-line::before{
+      content:"";
+      position:absolute;
+      top:0; left:-40%;
+      width:40%;
+      height:100%;
+      background: rgba(255,255,255,.35);
+      transform: skewX(-22deg);
+      animation: shine 1.6s ease-in-out infinite;
+      opacity:.75;
+    }
+    @keyframes shine{
+      0%{ left:-45%; }
+      100%{ left:110%; }
+    }
+
+    /* Benefits checklist */
+    .benefits-top{
+      display:flex;
+      gap:12px;
+      align-items:center;
+      justify-content:space-between;
+      flex-wrap:wrap;
+      width:min(520px, 100%);
+      margin: 10px auto 0;
+    }
+    .unlocked{
+      background: rgba(255,255,255,.14);
+      border: 1px solid rgba(255,255,255,.16);
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-weight: 900;
+    }
+
+    .list{
+      list-style:none;
+      padding:0;
+      margin: 10px auto 6px;
+      text-align:left;
+      width: min(520px, 100%);
+      background: rgba(255,255,255,.12);
+      border: 1px solid rgba(255,255,255,.16);
+      border-radius: 18px;
+      padding: 12px 14px;
+    }
+
+    .benefit-item{
+      padding: 8px 6px;
+      border-bottom: 1px dashed rgba(255,255,255,.22);
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+    .benefit-item:last-child{ border-bottom:none; }
+
+    .benefit-label{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      width:100%;
+      cursor:pointer;
+      user-select:none;
+    }
+    .benefit-check{
+      width: 22px;
+      height: 22px;
+      accent-color: #00ffcc;
+      flex: 0 0 auto;
+    }
+    .benefit-text{ font-weight: 900; }
+
+    .benefit-item.checked{
+      background: rgba(0,255,204,.10);
+      border-radius: 14px;
+    }
+    .benefit-item.checked .benefit-text{
+      text-shadow: 0 10px 24px rgba(0,0,0,.18);
+    }
+
+    .toast{
+      position: fixed;
+      left: 50%;
+      bottom: max(env(safe-area-inset-bottom), 16px);
+      transform: translateX(-50%);
+      background: rgba(0,0,0,.45);
+      border: 1px solid rgba(255,255,255,.16);
+      color: white;
+      padding: 10px 14px;
+      border-radius: 999px;
+      font-weight: 900;
+      box-shadow: 0 16px 44px rgba(0,0,0,.26);
+      opacity: 0;
+      pointer-events:none;
+      transition: opacity .18s ease, transform .18s ease;
+      z-index: 120;
+    }
+    .toast.show{
+      opacity: 1;
+      transform: translateX(-50%) translateY(-4px);
+    }
+
+    .burst{
+      position: fixed;
+      left: 50vw;
+      top: 50vh;
+      transform: translate(-50%,-50%);
+      font-size: 26px;
+      pointer-events:none;
+      z-index: 90;
+      text-shadow: 0 14px 28px rgba(0,0,0,.20);
+      animation: burst 900ms ease-out forwards;
+    }
+    @keyframes burst{
+      to{
+        transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(.7);
+        opacity: 0;
+      }
     }
 
     /* Reduced motion */
@@ -372,6 +535,7 @@
       body{ overflow:auto; }
     }
 
+    /* Small screens: stacked buttons */
     @media (max-width: 420px){
       .btn-row{ flex-direction:column; align-items:stretch; }
       button{ width:100%; }
@@ -415,7 +579,7 @@
       </div>
     </section>
 
-    <!-- Wedding Animation Screen (NEW) -->
+    <!-- Wedding Animation Screen -->
     <section class="screen" id="weddingScreen" aria-labelledby="wTitle">
       <h1 id="wTitle">Wedding bells loading… 🔔💍</h1>
       <p class="small">Finalizing forever. Please hold tight (and my hand).</p>
@@ -444,7 +608,7 @@
 
           <div class="wedding-text">
             <p class="big">Activating: Happily Ever After ✅</p>
-            <p class="sub" id="weddingCountdown">Taking you to the ceremony in 3…</p>
+            <p class="sub" id="weddingCountdown">Taking you to the ceremony in 5…</p>
           </div>
         </div>
       </div>
@@ -457,26 +621,70 @@
 
     <!-- Celebration Screen -->
     <section class="screen" id="celebrationScreen" aria-labelledby="cTitle">
-      <h1 id="cTitle">🎉 CONGRATULATIONS 🎉</h1>
-      <h2>Love Mode: Activated 💍❤️</h2>
-      <p class="small">Benefits package includes the following (terms very cute, conditions apply):</p>
+      <h1 id="cTitle" class="celebrate-title">🎉 CONGRATULATIONS 🎉</h1>
+      <div class="shine-line" aria-hidden="true"></div>
 
-      <ul class="list">
-        <li>✅ Unlimited chai dates ☕</li>
-        <li>✅ Random long drives 🚗</li>
-        <li>✅ Daily good morning texts 🌞</li>
-        <li>✅ Emotional support, premium tier ❤️</li>
-        <li>✅ Hugs subscription (auto-renews forever) 🤗</li>
-        <li>✅ Lifetime tech support (yes, even printers) 💻</li>
-        <li>✅ VIP access to my bad jokes 😎</li>
+      <h2 class="celebrate-sub">Love Mode: Activated 💍❤️</h2>
+      <p class="small celebrate-lead">Benefits package includes the following (terms very cute, conditions apply):</p>
+
+      <div class="benefits-top">
+        <div class="unlocked" id="unlockedCount">Unlocked: 0/7</div>
+        <div class="small" style="opacity:.95;">Tick a box to “activate” it</div>
+      </div>
+
+      <ul class="list" id="benefitsList">
+        <li class="benefit-item" data-emoji="☕" data-toast="Chai dates unlocked. Cheers! ☕">
+          <label class="benefit-label">
+            <input class="benefit-check" type="checkbox" />
+            <span class="benefit-text">Unlimited chai dates ☕</span>
+          </label>
+        </li>
+        <li class="benefit-item" data-emoji="🚗" data-toast="Long drive mode: ON 🚗">
+          <label class="benefit-label">
+            <input class="benefit-check" type="checkbox" />
+            <span class="benefit-text">Random long drives 🚗</span>
+          </label>
+        </li>
+        <li class="benefit-item" data-emoji="🌞" data-toast="Good morning texts scheduled 🌞">
+          <label class="benefit-label">
+            <input class="benefit-check" type="checkbox" />
+            <span class="benefit-text">Daily good morning texts 🌞</span>
+          </label>
+        </li>
+        <li class="benefit-item" data-emoji="❤️" data-toast="Emotional support: premium tier ❤️">
+          <label class="benefit-label">
+            <input class="benefit-check" type="checkbox" />
+            <span class="benefit-text">Emotional support, premium tier ❤️</span>
+          </label>
+        </li>
+        <li class="benefit-item" data-emoji="🤗" data-toast="Hugs subscription activated 🤗">
+          <label class="benefit-label">
+            <input class="benefit-check" type="checkbox" />
+            <span class="benefit-text">Hugs subscription (auto-renews forever) 🤗</span>
+          </label>
+        </li>
+        <li class="benefit-item" data-emoji="💻" data-toast="Tech support activated (even printers) 💻">
+          <label class="benefit-label">
+            <input class="benefit-check" type="checkbox" />
+            <span class="benefit-text">Lifetime tech support (yes, even printers) 💻</span>
+          </label>
+        </li>
+        <li class="benefit-item" data-emoji="😎" data-toast="Bad jokes access granted 😎">
+          <label class="benefit-label">
+            <input class="benefit-check" type="checkbox" />
+            <span class="benefit-text">VIP access to my bad jokes 😎</span>
+          </label>
+        </li>
       </ul>
 
-      <div class="btn-row" style="margin-top:14px;">
+      <div class="btn-row celebrate-actions" style="margin-top:14px;">
         <button class="yes" id="finalBtn" type="button">Seal it with a hug 🤝❤️</button>
         <button style="background: rgba(255,255,255,.18); color:white; border:1px solid rgba(255,255,255,.20);" id="restartBtn3" type="button">Replay</button>
       </div>
     </section>
   </div>
+
+  <div class="toast" id="toast" aria-live="polite"></div>
 
   <!-- Controls -->
   <div class="controls" aria-label="Controls">
@@ -533,6 +741,12 @@
       .map(id => document.getElementById(id));
 
     const finalBtn = document.getElementById("finalBtn");
+
+    // Benefits elements
+    const benefitsList = document.getElementById("benefitsList");
+    const unlockedCount = document.getElementById("unlockedCount");
+    const toast = document.getElementById("toast");
+    let toastTimer = null;
 
     let musicStarted = false;
     let heartTimer = null;
@@ -656,34 +870,33 @@
 
         if (width >= 100){
           clearInterval(loadingTimer);
-          startWeddingSequence(); // NEW
+          startWeddingSequence();
         }
       }, 22);
     }
 
+    // Countdown: 5,4,3,2,1 then ceremony
     function startWeddingSequence(){
-      // go to wedding animation screen for 3 seconds, then celebration
       switchScreen(screens.l, screens.w);
 
       clearTimeout(weddingTimer);
       clearInterval(weddingTick);
 
-      let n = 3;
+      let n = 5;
       weddingCountdown.innerText = `Taking you to the ceremony in ${n}…`;
 
       weddingTick = setInterval(() => {
         n--;
-        if (n <= 0){
+        if (n >= 1){
+          weddingCountdown.innerText = `Taking you to the ceremony in ${n}…`;
+        } else {
+          weddingCountdown.innerText = "Taking you to the ceremony… NOW! 🎉";
           clearInterval(weddingTick);
-          weddingCountdown.innerText = "Here we gooooo! 🎉";
-          return;
         }
-        weddingCountdown.innerText = `Taking you to the ceremony in ${n}…`;
       }, 900);
 
-      weddingTimer = setTimeout(() => {
-        goCelebration();
-      }, 3000);
+      // allow the "NOW" line to show briefly
+      weddingTimer = setTimeout(goCelebration, 5 * 900 + 500);
     }
 
     function goCelebration(){
@@ -691,6 +904,7 @@
       clearInterval(weddingTick);
       switchScreen(screens.w, screens.c);
       confettiHeartsBurst();
+      updateUnlocked();
     }
 
     function restart(){
@@ -702,7 +916,6 @@
       msg.innerText = "";
       resetNoButton();
 
-      // hide other screens, show question
       screens.l.classList.remove("active");
       screens.w.classList.remove("active");
       screens.c.classList.remove("active");
@@ -740,7 +953,7 @@
 
     function confettiHeartsBurst(){
       if (!heartsOn) return;
-      for (let i=0; i<18; i++){
+      for (let i=0; i<22; i++){
         setTimeout(() => {
           const h = document.createElement("div");
           h.className = "heart";
@@ -749,8 +962,40 @@
           h.style.animationDuration = (Math.random()*1.2 + 2.2) + "s";
           document.body.appendChild(h);
           setTimeout(() => h.remove(), 4200);
-        }, i*70);
+        }, i*55);
       }
+    }
+
+    // Benefits interactions
+    function showToast(text){
+      if (!toast) return;
+      toast.innerText = text;
+      toast.classList.add("show");
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toast.classList.remove("show"), 1400);
+    }
+
+    function burstEmoji(emoji, count = 14){
+      for (let i = 0; i < count; i++){
+        const b = document.createElement("div");
+        b.className = "burst";
+        b.textContent = emoji;
+
+        const dx = (Math.random() * 260 - 130).toFixed(0) + "px";
+        const dy = (Math.random() * 220 - 140).toFixed(0) + "px";
+        b.style.setProperty("--dx", dx);
+        b.style.setProperty("--dy", dy);
+
+        document.body.appendChild(b);
+        setTimeout(() => b.remove(), 950);
+      }
+    }
+
+    function updateUnlocked(){
+      if (!benefitsList || !unlockedCount) return;
+      const checks = benefitsList.querySelectorAll(".benefit-check");
+      const checked = benefitsList.querySelectorAll(".benefit-check:checked");
+      unlockedCount.innerText = `Unlocked: ${checked.length}/${checks.length}`;
     }
 
     function makeClickable(el, fn){
@@ -782,6 +1027,36 @@
       confettiHeartsBurst();
     });
 
+    if (benefitsList){
+      benefitsList.addEventListener("change", (e) => {
+        const cb = e.target;
+        if (!cb.classList || !cb.classList.contains("benefit-check")) return;
+
+        const item = cb.closest(".benefit-item");
+        if (!item) return;
+
+        const emoji = item.getAttribute("data-emoji") || "✨";
+        const toastText = item.getAttribute("data-toast") || "Activated ✨";
+
+        item.classList.toggle("checked", cb.checked);
+        updateUnlocked();
+
+        if (cb.checked){
+          burstEmoji(emoji, 16);
+          showToast(toastText);
+
+          const total = benefitsList.querySelectorAll(".benefit-check").length;
+          const done = benefitsList.querySelectorAll(".benefit-check:checked").length;
+          if (done === total) confettiHeartsBurst();
+          else if (done === Math.ceil(total/2)) burstEmoji("💍", 10);
+        } else {
+          showToast("Paused (you can re-activate anytime) 🙂");
+        }
+      });
+
+      updateUnlocked();
+    }
+
     // Start hearts by default (unless reduced motion)
     const reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (!reduceMotion) startHearts();
@@ -793,6 +1068,7 @@
       else if (e.key.toLowerCase() === "r") restart();
     });
 
+    // Stop background stuff when tab hidden
     document.addEventListener("visibilitychange", () => {
       if (document.hidden) stopHearts();
       else if (heartsOn && !reduceMotion) startHearts();
