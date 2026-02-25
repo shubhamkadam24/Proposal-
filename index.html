@@ -26,23 +26,41 @@
     }
 
     *{ box-sizing:border-box; }
-    html,body{ height:100%; }
+
+    /* Allow page to grow and scroll */
+    html, body{ height:auto; }
+
     body{
       margin:0;
       font-family: Arial, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
       background:linear-gradient(135deg,var(--bg1),var(--bg2));
       color:var(--text);
       text-align:center;
-      overflow:hidden;
+
+      /* FIX: was overflow:hidden; */
+      overflow-x:hidden;
+      overflow-y:auto;
+
       -webkit-tap-highlight-color: transparent;
     }
 
     .wrap{
-      min-height:100vh;
+      /* Mobile-friendly viewport sizing */
+      min-height: 100vh;
+      min-height: 100svh;
+      min-height: 100dvh;
+
       padding: max(env(safe-area-inset-top), 12px) var(--pad) max(env(safe-area-inset-bottom), 18px);
       display:flex;
-      align-items:center;
       justify-content:center;
+
+      /* FIX: anchor to top so tall content is reachable */
+      align-items:flex-start;
+    }
+
+    /* Center only when there's enough vertical space */
+    @media (min-height: 740px){
+      .wrap{ align-items:center; }
     }
 
     /* Screens */
@@ -146,7 +164,7 @@
     .controls{
       position:fixed;
       right: 14px;
-      bottom: 14px;
+      bottom: max(env(safe-area-inset-bottom), 14px);
       display:flex;
       gap:10px;
       z-index: 50;
@@ -204,6 +222,11 @@
       box-shadow: var(--shadow);
       padding: 16px 16px 14px;
       text-align:left;
+
+      /* FIX: modal scroll on small screens */
+      max-height: min(80vh, 620px);
+      overflow:auto;
+      -webkit-overflow-scrolling: touch;
     }
     .modal h3{ margin: 4px 0 6px; font-size: 20px; }
     .modal p{ margin: 6px 0 12px; opacity:.95; }
@@ -462,8 +485,13 @@
       display:flex;
       align-items:center;
       gap:10px;
+
+      /* NEW: smooth selection feel */
+      position: relative;
+      transition: background-color .25s ease, transform .18s ease, border-radius .25s ease;
     }
     .benefit-item:last-child{ border-bottom:none; }
+    .benefit-item:active{ transform: scale(.99); }
 
     .benefit-label{
       display:flex;
@@ -478,15 +506,46 @@
       height: 22px;
       accent-color: #00ffcc;
       flex: 0 0 auto;
+
+      /* NEW: subtle bounce */
+      transition: transform .14s ease;
     }
     .benefit-text{ font-weight: 900; }
 
     .benefit-item.checked{
       background: rgba(0,255,204,.10);
       border-radius: 14px;
+
+      /* NEW: tiny lift */
+      transform: translateY(-1px);
     }
     .benefit-item.checked .benefit-text{
       text-shadow: 0 10px 24px rgba(0,0,0,.18);
+    }
+    .benefit-item.checked .benefit-check{
+      transform: scale(1.12);
+    }
+
+    /* NEW: emoji appears smoothly when selected (uses data-emoji) */
+    .benefit-item::after{
+      content: attr(data-emoji);
+      margin-left: auto;
+      font-size: 22px;
+      line-height: 1;
+      opacity: 0;
+      transform: translateY(2px) scale(.6);
+      filter: saturate(1.1);
+      transition: opacity .18s ease, transform .28s cubic-bezier(.2,.9,.2,1);
+    }
+    .benefit-item.checked::after{
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      animation: emojiPop .38s cubic-bezier(.2,.9,.2,1) both;
+    }
+    @keyframes emojiPop{
+      0%   { transform: translateY(2px) scale(.6); }
+      60%  { transform: translateY(-1px) scale(1.18); }
+      100% { transform: translateY(0) scale(1); }
     }
 
     .toast{
@@ -539,7 +598,7 @@
     @media (max-width: 420px){
       .btn-row{ flex-direction:column; align-items:stretch; }
       button{ width:100%; }
-      .controls{ right: 10px; bottom: 10px; }
+      .controls{ right: 10px; bottom: max(env(safe-area-inset-bottom), 10px); }
     }
   </style>
 </head>
@@ -813,14 +872,26 @@
       yesBtn.focus();
     }
 
+    // Keep "NO" within the visible mobile viewport
     function moveNoButton(){
       const padding = 16;
-      const btnRect = noBtn.getBoundingClientRect();
-      const maxX = window.innerWidth - btnRect.width - padding;
-      const maxY = window.innerHeight - btnRect.height - padding;
 
-      const x = Math.max(padding, Math.random() * maxX);
-      const y = Math.max(padding, Math.random() * maxY);
+      const vv = window.visualViewport;
+      const vw = vv ? vv.width : window.innerWidth;
+      const vh = vv ? vv.height : window.innerHeight;
+      const ox = vv ? vv.offsetLeft : 0;
+      const oy = vv ? vv.offsetTop : 0;
+
+      const btnRect = noBtn.getBoundingClientRect();
+      const reservedBottom = 90;
+
+      const minX = ox + padding;
+      const minY = oy + padding;
+      const maxX = ox + vw - btnRect.width - padding;
+      const maxY = oy + vh - btnRect.height - padding - reservedBottom;
+
+      const x = (maxX <= minX) ? minX : (minX + Math.random() * (maxX - minX));
+      const y = (maxY <= minY) ? minY : (minY + Math.random() * (maxY - minY));
 
       noBtn.style.position = "fixed";
       noBtn.style.left = x + "px";
@@ -875,7 +946,6 @@
       }, 22);
     }
 
-    // Countdown: 5,4,3,2,1 then ceremony
     function startWeddingSequence(){
       switchScreen(screens.l, screens.w);
 
@@ -895,7 +965,6 @@
         }
       }, 900);
 
-      // allow the "NOW" line to show briefly
       weddingTimer = setTimeout(goCelebration, 5 * 900 + 500);
     }
 
@@ -966,7 +1035,6 @@
       }
     }
 
-    // Benefits interactions
     function showToast(text){
       if (!toast) return;
       toast.innerText = text;
@@ -1008,7 +1076,6 @@
       });
     }
 
-    // Events
     yesBtn.addEventListener("click", () => { startMusic(); yesClicked(); });
     noBtn.addEventListener("click", () => { startMusic(); noClicked(); });
 
@@ -1057,18 +1124,15 @@
       updateUnlocked();
     }
 
-    // Start hearts by default (unless reduced motion)
     const reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (!reduceMotion) startHearts();
 
-    // Keyboard shortcuts
     window.addEventListener("keydown", (e) => {
       if (e.key === "Escape" && modal.classList.contains("open")) closeModal();
       else if (e.key.toLowerCase() === "m") toggleMusic();
       else if (e.key.toLowerCase() === "r") restart();
     });
 
-    // Stop background stuff when tab hidden
     document.addEventListener("visibilitychange", () => {
       if (document.hidden) stopHearts();
       else if (heartsOn && !reduceMotion) startHearts();
