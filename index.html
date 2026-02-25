@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Important Question 💍</title>
+
+<style>
+body{
+    margin:0;
+    font-family:Arial, sans-serif;
+    background:linear-gradient(135deg,#ff758c,#ff7eb3);
+    color:white;
+    text-align:center;
+    height:100vh;
+    overflow:hidden;
+}
+
+/* Screens */
+.screen{
+    display:none;
+    justify-content:center;
+    align-items:center;
+    flex-direction:column;
+    height:100vh;
+    padding:20px;
+}
+
+.active{
+    display:flex;
+}
+
+button{
+    padding:15px 25px;
+    font-size:18px;
+    border:none;
+    border-radius:30px;
+    margin:10px;
+    cursor:pointer;
+}
+
+.yes{ background:#00c853; color:white; }
+.no{ background:#d50000; color:white; position:relative; }
+
+.progress{
+    width:80%;
+    background:#ffffff33;
+    border-radius:20px;
+    margin:20px auto;
+    overflow:hidden;
+}
+
+.progress-bar{
+    height:20px;
+    width:0%;
+    background:#00ffcc;
+    border-radius:20px;
+}
+
+.music-btn{
+    position:fixed;
+    bottom:20px;
+    right:20px;
+    background:#ffffff33;
+    border-radius:50%;
+    width:55px;
+    height:55px;
+    font-size:22px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+.heart{
+    position:fixed;
+    top:-10px;
+    font-size:20px;
+    animation:fall linear forwards;
+}
+
+@keyframes fall{
+    to{
+        transform:translateY(100vh);
+        opacity:0;
+    }
+}
+</style>
+</head>
+
+<body onclick="startMusicOnce()">
+
+<!-- Question Screen -->
+<div class="screen active" id="questionScreen">
+    <h1>Will you marry me? 💍❤️</h1>
+    <button class="yes" onclick="yesClicked()">YES 😍</button>
+    <button class="no" id="noBtn" onclick="noClicked()">NO 🙃</button>
+    <div id="message"></div>
+</div>
+
+<!-- Loading Screen -->
+<div class="screen" id="loadingScreen">
+    <h1>Verifying Answer... 🤖</h1>
+    <div class="progress">
+        <div class="progress-bar" id="bar"></div>
+    </div>
+    <p id="percent">0%</p>
+</div>
+
+<!-- Celebration Screen -->
+<div class="screen" id="celebrationScreen">
+    <h1>🎉 CONGRATULATIONS 🎉</h1>
+    <h2>Love Mode Activated 💍❤️</h2>
+    <p>You unlocked:</p>
+    <ul style="list-style:none;padding:0;text-align:left;">
+        <li>✅ Unlimited chai dates ☕</li>
+        <li>✅ Random long drives 🚗</li>
+        <li>✅ Daily good morning texts 🌞</li>
+        <li>✅ Emotional support system ❤️</li>
+        <li>✅ Premium hugs subscription 🤗</li>
+        <li>✅ Lifetime tech support 💻</li>
+        <li>✅ VIP access to my bad jokes 😎</li>
+    </ul>
+    <p style="font-size:28px;">💃🕺💍❤️🎉✨</p>
+</div>
+
+<div class="music-btn" onclick="toggleMusic()">🎵</div>
+
+<audio id="bgMusic" loop>
+    <source src="love.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+let musicStarted=false;
+let music=document.getElementById("bgMusic");
+
+/* Music Start */
+function startMusicOnce(){
+    if(!musicStarted){
+        music.volume=0;
+        music.play();
+        let vol=0;
+        let fade=setInterval(()=>{
+            if(vol<1){
+                vol+=0.05;
+                music.volume=vol;
+            }else{
+                clearInterval(fade);
+            }
+        },200);
+        musicStarted=true;
+    }
+}
+
+function toggleMusic(){
+    if(music.paused) music.play();
+    else music.pause();
+}
+
+/* YES Click */
+function yesClicked(){
+    switchScreen("questionScreen","loadingScreen");
+    startLoading();
+}
+
+/* Loading Logic */
+function startLoading(){
+    let width=0;
+    let interval=setInterval(()=>{
+        if(width>=100){
+            clearInterval(interval);
+            switchScreen("loadingScreen","celebrationScreen");
+        }else{
+            width++;
+            document.getElementById("bar").style.width=width+"%";
+            document.getElementById("percent").innerText=width+"%";
+        }
+    },25);
+}
+
+/* Screen Switch */
+function switchScreen(hide,show){
+    document.getElementById(hide).classList.remove("active");
+    document.getElementById(show).classList.add("active");
+}
+
+/* NO Button */
+let noCount=0;
+function noClicked(){
+    noCount++;
+    const responses=[
+        "Error 404: 'No' not found 😌",
+        "System rejection disabled.",
+        "Nice try 😂 destiny says YES.",
+        "Are you sure? 🤔",
+        "Okay okay… real choice ❤️"
+    ];
+    document.getElementById("message").innerText=
+        responses[Math.min(noCount-1,responses.length-1)];
+    moveButton();
+}
+
+function moveButton(){
+    const btn=document.getElementById("noBtn");
+    btn.style.position="absolute";
+    btn.style.left=Math.random()*(window.innerWidth-120)+"px";
+    btn.style.top=Math.random()*(window.innerHeight-120)+"px";
+}
+
+/* Heart Rain */
+setInterval(()=>{
+    let heart=document.createElement("div");
+    heart.classList.add("heart");
+    heart.innerHTML="❤️";
+    heart.style.left=Math.random()*100+"vw";
+    heart.style.animationDuration=(Math.random()*2+3)+"s";
+    document.body.appendChild(heart);
+    setTimeout(()=>{heart.remove();},5000);
+},500);
+</script>
+
+</body>
+</html>
